@@ -14,7 +14,7 @@ URL:		https://wiki.openjdk.java.net/dashboard.action
 Source0: %{name}-%{version}.tar.xz
 Source1: http://services.gradle.org/distributions/gradle-1.8-bin.zip
 
-BuildRequires:	java-1.8.0-openjdk java-1.8.0-openjdk-devel mercurial bison flex gperf ksh pkgconfig libpng12-devel libjpeg-devel libxml2-devel libxslt-devel systemd-devel glib2-devel gtk2-devel libXtst-devel pango-devel freetype-devel alsa-lib-devel glib2-devel qt-devel ffmpeg-devel
+BuildRequires:	java-1.8.0-openjdk java-1.8.0-openjdk-devel mercurial bison flex gperf ksh pkgconfig libpng12-devel libjpeg-devel libxml2-devel libxslt-devel systemd-devel glib2-devel gtk2-devel libXtst-devel pango-devel freetype-devel alsa-lib-devel glib2-devel qt-devel ffmpeg-devel perl perl-version perl-Digest perl-Digest-MD5
 Requires:	java-1.8.0-openjdk
 
 %description
