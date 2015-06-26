@@ -2,7 +2,7 @@
 
 Name:		java-1.8.0-openjfx
 Version:	8u45_b13
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	OpenJFX runtime libraries and documentation
 Group:		Development/Languages
 License:	GPL with the class path exception
@@ -14,7 +14,7 @@ URL:		https://wiki.openjdk.java.net/dashboard.action
 Source0: %{name}-%{version}.tar.xz
 Source1: http://services.gradle.org/distributions/gradle-1.8-bin.zip
 
-BuildRequires:	java-1.8.0-openjdk java-1.8.0-openjdk-devel mercurial bison flex gperf ksh pkgconfig libpng12-devel libjpeg-devel libxml2-devel libxslt-devel systemd-devel glib2-devel gtk2-devel libXtst-devel pango-devel freetype-devel
+BuildRequires:	java-1.8.0-openjdk java-1.8.0-openjdk-devel mercurial bison flex gperf ksh pkgconfig libpng12-devel libjpeg-devel libxml2-devel libxslt-devel systemd-devel glib2-devel gtk2-devel libXtst-devel pango-devel freetype-devel alsa-lib-devel glib2-devel qt-devel ffmpeg-devel
 Requires:	java-1.8.0-openjdk
 
 %description
@@ -22,9 +22,10 @@ OpenJFX is an open source, next generation client application platform for deskt
 
 %global openjdk8_version %(rpm -q java-1.8.0-openjdk)
 %global openjdk8_install_dir %{buildroot}/usr/lib/jvm/%{openjdk8_version}
+%global openjfx_srcdir %{_builddir}/%{name}-%{version}
 
 # There is no need for a debug package (for now)
-%define debug_packages  %{nil}
+%global debug_packages %{nil}
 
 %prep
 rpm -q %{name} && echo "You need to uninstall the previously built openjfx package before proceeding (this sounds stupid, but it actually makes sense!)"
@@ -32,15 +33,22 @@ chmod -R +x %{_builddir}
 [ -d %{buildroot} ] && chmod -R +x %{buildroot}
 %setup -T -q -n gradle-1.8 -b 1
 %setup -q
-cp %{openjfx_srcdir}/gradle.properties.template %{openjfx_srcdir}/gradle.properties
-sed -i "s|#BUILD_JAVADOC = true|BUILD_JAVADOC = true|" %{openjfx_srcdir}/gradle.properties
-sed -i "s|#NUM_COMPILE_THREADS = 12|NUM_COMPILE_THREADS = 8|" %{openjfx_srcdir}/gradle.properties
+
+%define gradle_properties %{openjfx_srcdir}/gradle.properties
+echo "COMPILE_WEBKIT = true" >> %{gradle_properties}
+echo "COMPILE_MEDIA = true" >> %{gradle_properties}
+echo "BUILD_JAVADOC = true" >> %{gradle_properties}
+echo "BUILD_SRC_ZIP = true" >> %{gradle_properties}
 
 %build
-%{_builddir}/gradle-1.8/bin/gradle
+%define qmake_symlink %{_builddir}/bin/qmake
+mkdir -p %{_builddir}/bin
+[[ -f %{qmake_symlink} ]] || ln -s /usr/bin/qmake-qt4 %{qmake_symlink}
+PATH=%{_builddir}/bin:$PATH %{_builddir}/gradle-1.8/bin/gradle
 
 %install
 %global sdkdir build/sdk
+mkdir -p build/sdk
 chmod -R +x %{sdkdir}
 mkdir -p %{openjdk8_install_dir}/{lib,bin,man/man1,jre/lib/ext,jre/lib/amd64}
 
