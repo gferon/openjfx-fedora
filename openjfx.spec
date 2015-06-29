@@ -2,7 +2,7 @@
 
 Name:		java-1.8.0-openjfx
 Version:	8u45_b13
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	OpenJFX runtime libraries and documentation
 Group:		Development/Languages
 License:	GPL with the class path exception
@@ -28,6 +28,7 @@ OpenJFX is an open source, next generation client application platform for deskt
 %global debug_packages %{nil}
 
 %prep
+echo %{_arch}
 rpm -q %{name} && echo "You need to uninstall the previously built openjfx package before proceeding (this sounds stupid, but it actually makes sense!)"
 chmod -R +x %{_builddir}
 [ -d %{buildroot} ] && chmod -R +x %{buildroot}
@@ -50,7 +51,13 @@ PATH=%{_builddir}/bin:$PATH %{_builddir}/gradle-1.8/bin/gradle
 %global sdkdir build/sdk
 mkdir -p build/sdk
 chmod -R +x %{sdkdir}
-mkdir -p %{openjdk8_install_dir}/{lib,bin,man/man1,jre/lib/ext,jre/lib/amd64}
+mkdir -p %{openjdk8_install_dir}/{lib,bin,man/man1,jre/lib/ext}
+%ifarch %{ix86}
+mkdir -p %{openjdk8_install_dir}/jre/lib/i386
+%endif
+%ifarch x86_64
+mkdir -p %{openjdk8_install_dir}/jre/lib/amd64
+%endif
 
 # JDK libraries
 install -m644 %{sdkdir}/lib/* %{openjdk8_install_dir}/lib/
@@ -59,7 +66,12 @@ install -m644 %{sdkdir}/man/man1/* %{openjdk8_install_dir}/man/man1/
 
 # JRE libraries
 install -m644 %{sdkdir}/rt/lib/ext/* %{openjdk8_install_dir}/jre/lib/ext/
+%ifarch %{ix86}
+install -m644 %{sdkdir}/rt/lib/i386/* %{openjdk8_install_dir}/jre/lib/i386/
+%endif
+%ifarch x86_64
 install -m644 %{sdkdir}/rt/lib/amd64/* %{openjdk8_install_dir}/jre/lib/amd64/
+%endif
 
 %files
 %defattr(-,root,root,-)
