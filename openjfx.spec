@@ -1,20 +1,18 @@
-%global openjfx_version 8u45-b13
-
 Name:		java-1.8.0-openjfx
-Version:	8u45_b13
-Release:	3%{?dist}
+Version:	8u60_b27
+Release:	1%{?dist}
 Summary:	OpenJFX runtime libraries and documentation
 Group:		Development/Languages
 License:	GPL with the class path exception
 URL:		https://wiki.openjdk.java.net/dashboard.action
 
+%global openjfx_version 8u60-b27
 # hg clone http://hg.openjdk.java.net/openjfx/8u-dev/rt %{name}-%{version} -r %{openjfx_version}
-## find openjfx -name .hg* -exec rm -rf '{}' \;
 # tar --exclude ".hg*" -cJf %{name}-%{version}.tar.xz %{name}-%{version}
 Source0: %{name}-%{version}.tar.xz
 Source1: http://services.gradle.org/distributions/gradle-1.8-bin.zip
 
-BuildRequires:	java-1.8.0-openjdk java-1.8.0-openjdk-devel mercurial bison flex gperf ksh pkgconfig libpng12-devel libjpeg-devel libxml2-devel libxslt-devel systemd-devel glib2-devel gtk2-devel libXtst-devel pango-devel freetype-devel alsa-lib-devel glib2-devel qt-devel ffmpeg-devel perl perl-version perl-Digest perl-Digest-MD5
+BuildRequires:	java-1.8.0-openjdk java-1.8.0-openjdk-devel mercurial bison flex gperf ksh pkgconfig libpng12-devel libjpeg-devel libxml2-devel libxslt-devel systemd-devel glib2-devel gtk2-devel libXtst-devel pango-devel freetype-devel alsa-lib-devel glib2-devel qt-devel gstreamer-devel ffmpeg-devel perl perl-version perl-Digest perl-Digest-MD5
 Requires:	java-1.8.0-openjdk
 
 %description
@@ -28,7 +26,6 @@ OpenJFX is an open source, next generation client application platform for deskt
 %global debug_packages %{nil}
 
 %prep
-echo %{_arch}
 rpm -q %{name} && echo "You need to uninstall the previously built openjfx package before proceeding (this sounds stupid, but it actually makes sense!)"
 chmod -R +x %{_builddir}
 [ -d %{buildroot} ] && chmod -R +x %{buildroot}
