@@ -1,12 +1,12 @@
 Name:		java-1.8.0-openjfx
-Version:	8u60_b27
+Version:	8u31_b13
 Release:	1%{?dist}
 Summary:	OpenJFX runtime libraries and documentation
 Group:		Development/Languages
 License:	GPL with the class path exception
 URL:		https://wiki.openjdk.java.net/dashboard.action
 
-%global openjfx_version 8u60-b27
+%global openjfx_version 8u31-b13
 # hg clone http://hg.openjdk.java.net/openjfx/8u-dev/rt %{name}-%{version} -r %{openjfx_version}
 # tar --exclude ".hg*" -cJf %{name}-%{version}.tar.xz %{name}-%{version}
 Source0: %{name}-%{version}.tar.xz
