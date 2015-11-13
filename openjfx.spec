@@ -1,18 +1,18 @@
 Name:		java-1.8.0-openjfx
-Version:	8u60_b27
+Version:	8u65_b17
 Release:	1%{?dist}
 Summary:	OpenJFX runtime libraries and documentation
 Group:		Development/Languages
 License:	GPL with the class path exception
 URL:		https://wiki.openjdk.java.net/dashboard.action
 
-%global openjfx_version 8u60-b27
+%global openjfx_version 8u65-b17
 # hg clone http://hg.openjdk.java.net/openjfx/8u-dev/rt %{name}-%{version} -r %{openjfx_version}
 # tar --exclude ".hg*" -cJf %{name}-%{version}.tar.xz %{name}-%{version}
 Source0: %{name}-%{version}.tar.xz
 Source1: http://services.gradle.org/distributions/gradle-1.8-bin.zip
 
-BuildRequires:	java-1.8.0-openjdk java-1.8.0-openjdk-devel mercurial bison flex gperf ksh pkgconfig libpng12-devel libjpeg-devel libxml2-devel libxslt-devel systemd-devel glib2-devel gtk2-devel libXtst-devel pango-devel freetype-devel alsa-lib-devel glib2-devel qt-devel gstreamer-devel ffmpeg-devel perl perl-version perl-Digest perl-Digest-MD5
+BuildRequires:	java-1.8.0-openjdk java-1.8.0-openjdk-devel mercurial bison flex gperf ksh pkgconfig libpng12-devel libjpeg-devel libxml2-devel libxslt-devel systemd-devel glib2-devel gtk2-devel libXtst-devel pango-devel freetype-devel alsa-lib-devel glib2-devel qt-devel gstreamer-devel ffmpeg-devel perl perl-version perl-Digest perl-Digest-MD5 ruby
 Requires:	java-1.8.0-openjdk
 
 %description
@@ -40,6 +40,8 @@ echo "BUILD_SRC_ZIP = true" >> %{gradle_properties}
 
 %build
 %define qmake_symlink %{_builddir}/bin/qmake
+export CXXFLAGS="-fPIC"
+export CFLAGS="-fPIC"
 mkdir -p %{_builddir}/bin
 [[ -f %{qmake_symlink} ]] || ln -s /usr/bin/qmake-qt4 %{qmake_symlink}
 PATH=%{_builddir}/bin:$PATH %{_builddir}/gradle-1.8/bin/gradle
