@@ -1,18 +1,19 @@
 Name:		java-1.8.0-openjfx
-Version:	8u65_b17
+Version:	8u102_b13
 Release:	1%{?dist}
 Summary:	OpenJFX runtime libraries and documentation
 Group:		Development/Languages
 License:	GPL with the class path exception
 URL:		https://wiki.openjdk.java.net/dashboard.action
 
-%global openjfx_version 8u65-b17
+%global openjfx_version 8u102-b13
 # hg clone http://hg.openjdk.java.net/openjfx/8u-dev/rt %{name}-%{version} -r %{openjfx_version}
 # tar --exclude ".hg*" -cJf %{name}-%{version}.tar.xz %{name}-%{version}
-Source0: %{name}-%{version}.tar.xz
-Source1: http://services.gradle.org/distributions/gradle-1.8-bin.zip
+#Source0: %{name}-%{version}.tar.xz
+Source0: http://services.gradle.org/distributions/gradle-1.8-bin.zip
+Source1: http://hg.openjdk.java.net/openjfx/8u/rt/archive/%{openjfx_version}.tar.gz
 
-BuildRequires:	java-1.8.0-openjdk java-1.8.0-openjdk-devel mercurial bison flex gperf ksh pkgconfig libpng12-devel libjpeg-devel libxml2-devel libxslt-devel systemd-devel glib2-devel gtk2-devel libXtst-devel pango-devel freetype-devel alsa-lib-devel glib2-devel qt-devel gstreamer-devel ffmpeg-devel perl perl-version perl-Digest perl-Digest-MD5 ruby
+BuildRequires: java-1.8.0-openjdk java-1.8.0-openjdk-devel mercurial bison flex gperf ksh pkgconfig libpng12-devel libjpeg-devel libxml2-devel libxslt-devel systemd-devel glib2-devel gtk2-devel libXtst-devel pango-devel freetype-devel alsa-lib-devel glib2-devel qt-devel gstreamer-devel perl perl-version perl-Digest perl-Digest-MD5 ruby gcc-c++
 Requires:	java-1.8.0-openjdk
 
 %description
@@ -20,7 +21,7 @@ OpenJFX is an open source, next generation client application platform for deskt
 
 %global openjdk8_version %(rpm -q java-1.8.0-openjdk)
 %global openjdk8_install_dir %{buildroot}/usr/lib/jvm/%{openjdk8_version}
-%global openjfx_srcdir %{_builddir}/%{name}-%{version}
+#%global openjfx_srcdir %{_builddir}/%{name}-%{version}
 
 # There is no need for a debug package (for now)
 %global debug_packages %{nil}
@@ -29,17 +30,23 @@ OpenJFX is an open source, next generation client application platform for deskt
 rpm -q %{name} && echo "You need to uninstall the previously built openjfx package before proceeding (this sounds stupid, but it actually makes sense!)"
 chmod -R +x %{_builddir}
 [ -d %{buildroot} ] && chmod -R +x %{buildroot}
-%setup -T -q -n gradle-1.8 -b 1
-%setup -q
+%autosetup -n gradle-1.8
+%setup -b 1 -n rt-%{openjfx_version}
+#%setup -T -q -n gradle-1.8 -b 1
+#%setup -q -T
 
-%define gradle_properties %{openjfx_srcdir}/gradle.properties
+%define gradle_properties gradle.properties
 echo "COMPILE_WEBKIT = true" >> %{gradle_properties}
-echo "COMPILE_MEDIA = true" >> %{gradle_properties}
+# We cannot compile media for now, as the code relies on FFmpeg, whose distributions
+# is not compliant with Fedora's rules
+echo "COMPILE_MEDIA = false" >> %{gradle_properties}
 echo "BUILD_JAVADOC = true" >> %{gradle_properties}
 echo "BUILD_SRC_ZIP = true" >> %{gradle_properties}
+echo "libav" = "true" >> %{gradle_properties}
 
 %build
 %define qmake_symlink %{_builddir}/bin/qmake
+export JAVA_HOME="/usr/lib/jvm/%{openjdk8_version}"
 export CXXFLAGS="-fPIC"
 export CFLAGS="-fPIC"
 mkdir -p %{_builddir}/bin
