@@ -5,7 +5,7 @@
 ### Clone repo
 
 ```
-git clone git@github.com:gferon/openjfx-fedora.git rpmbuild
+git clone https://github.com/gferon/openjfx-fedora.git rpmbuild
 ```
 
 ### Install dependencies
